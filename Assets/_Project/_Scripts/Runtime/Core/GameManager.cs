@@ -24,11 +24,6 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         public void SetLastestRideOnLift(LiftIdentity liftIdentity) {
             LastestRideOnLift = liftIdentity;
         }
-
-        // ------------ Win Checking ------------ //
-        public bool IsWin(List<RuntimeHallwayConfig> hallwayConfigs) {
-            return hallwayConfigs.All(e => e.IsAnomaly && e.IsExplored);
-        }
     }
 
     public enum GameState {

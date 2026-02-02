@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,11 +14,13 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         [SerializeField]
         private TMP_Text _winTXT;
 
-        private List<RuntimeHallwayConfig> _deck = new();
+        private readonly List<RuntimeHallwayConfig> _deck = new();
         private RuntimeHallwayConfig _currentHallway;
 
         private int _progress;
         private int _indexer = -1;
+
+        private bool _isWin = false;
 
         private void Awake() {
             InitializeDeck();
@@ -25,6 +28,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         }
 
         private void InitializeDeck() {
+            _deck.Clear();
+
             for (int i = 0; i < _deckSource.Hallways.Count; i++) {
                 for (int j = 0; j < _deckSource.Hallways[i].Quantity; j++) {
                     _deck.Add(new(
@@ -50,19 +55,23 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             Debug.Log($"Is Correct: {isCorrect}");
 
             if (isCorrect) {
-                _indexer++;
+                _currentHallway.Explore();
 
                 if (_currentHallway.IsAnomaly) {
                     _progress++;
                     _progressTXT.text = $"Progress : {_progress}";
-
-                    if (GameManager.Instance.IsWin(_deck)) {
-                        _winTXT.gameObject.SetActive(true);
-                        return;
-                    }
                 }
 
-                LoadNextHallway();
+                if (_deck.All(e => e.IsExplored && e.IsAnomaly)) {
+                    _isWin = true;
+                    _winTXT.gameObject.SetActive(true);
+                    return;
+                }
+
+                if (!_isWin) {
+                    _indexer++;
+                    LoadNextHallway();
+                }
             }
             else {
                 FailRun();
@@ -71,7 +80,6 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
         private void LoadNextHallway() {
             if (_currentHallway != null) {
-                _currentHallway.Explore();
                 SceneManager.UnloadSceneAsync(_currentHallway.SceneName);
             }
 
@@ -84,6 +92,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
                 SceneManager.UnloadSceneAsync(_currentHallway.SceneName);
 
             _progress = 0;
+            _indexer = -1;
             _progressTXT.text = $"Progress : {_progress}";
 
             InitializeDeck();

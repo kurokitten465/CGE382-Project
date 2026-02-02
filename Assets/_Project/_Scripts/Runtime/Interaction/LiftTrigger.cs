@@ -33,6 +33,7 @@ namespace PingPingProduction.ProjectAnomaly.Interaction {
 
                 if (GameManager.Instance.CurremtGameState != GameState.Resolve) return;
 
+                
                 _rm.OnLiftEntered(_liftID);
             }
         }

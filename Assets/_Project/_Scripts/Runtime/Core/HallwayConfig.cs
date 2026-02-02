@@ -23,7 +23,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
     public class RuntimeHallwayConfig {
         public readonly string SceneName;        
         public readonly bool IsAnomaly;
-        public bool IsExplored { get; private set; }
+        public bool IsExplored { get; private set; } = false;
 
         public RuntimeHallwayConfig(string scene, bool isAnomaly)
         {

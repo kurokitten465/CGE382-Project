@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac1fab35b1137f4abc3e0ad81461948, type: 3}
+  m_Name: hallway_deck_tests
+  m_EditorClassIdentifier: 
+  _hallways:
+  - ID: scene_hallway_normal_tests
+    Config: {fileID: 11400000, guid: aa81cf56d8b55224898283fdcde7682f, type: 2}
+    Quantity: 3
+  - ID: scene_hallway_anomaly_1_tests
+    Config: {fileID: 11400000, guid: 51df6e3e5512f3c4682686b348e143a1, type: 2}
+    Quantity: 1
+  - ID: scene_hallway_anomaly_2_tests
+    Config: {fileID: 11400000, guid: 07ac144587c6c8f4ebc1738b28060781, type: 2}
+    Quantity: 1

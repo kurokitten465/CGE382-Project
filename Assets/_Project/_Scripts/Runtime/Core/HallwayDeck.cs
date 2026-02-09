@@ -12,7 +12,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
         private void OnValidate() {
             foreach (var hallway in _hallways) {
-                hallway.ID = hallway.Config.SceneHolder;
+                hallway.ID = hallway.Config.SceneHolder.name;
             }
         }
     }
@@ -21,6 +21,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
     public class Hallway {
         public string ID;
         public HallwayConfig Config;
-        [Range(1, 100)] public int Quantity = 1;
+        [Range(1, 100)]
+        public int Quantity = 1;
     }
 }

@@ -1,37 +1,21 @@
+using System;
 using UnityEngine;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     [CreateAssetMenu(fileName = "HallwayConfig", menuName = "Project/HallwayConfig")]
     public class HallwayConfig : ScriptableObject {
-        public string SceneHolder;
+        public GameObject SceneHolder;
         public bool IsAnomaly;
-
-        #if UNITY_EDITOR
-        public UnityEditor.SceneAsset SceneAsset;
-
-        private void OnValidate() {
-            if (SceneAsset != null) {
-                SceneHolder = SceneAsset.name;
-            }
-            else {
-                SceneHolder = string.Empty;
-            }
-        }
-#endif
     }
 
-    public class RuntimeHallwayConfig {
-        public readonly string SceneName;        
+    [Serializable]
+    public readonly struct RuntimeHallwayConfig {
+        public readonly GameObject HallwayPrefab;        
         public readonly bool IsAnomaly;
-        public bool IsExplored { get; private set; } = false;
 
-        public RuntimeHallwayConfig(string scene, bool isAnomaly)
-        {
-            SceneName = scene;
+        public RuntimeHallwayConfig(GameObject hallwayPrefab, bool isAnomaly) {
+            HallwayPrefab = hallwayPrefab;
             IsAnomaly = isAnomaly;
         }
-
-        public void Explore() =>
-            IsExplored = true;
     }
 }

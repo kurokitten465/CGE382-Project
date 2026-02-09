@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a37c1aa155cdb83468592e543215abd3, type: 3}
-  m_Name: hallway_anomaly_2
+  m_Name: hallway_config_scene_hallway_anomaly_2_tests
   m_EditorClassIdentifier: 
-  SceneHolder: scene_hallway_anomaly_2_tests
+  SceneHolder: {fileID: 5998360246477667383, guid: e04655d9838f20043be7f9626f7c2078, type: 3}
   IsAnomaly: 1
-  SceneAsset: {fileID: 102900000, guid: a772b9b6bf1f8924b892e809b65975bf, type: 3}

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aac1fab35b1137f4abc3e0ad81461948, type: 3}
-  m_Name: hallway_deck_tests
+  m_Name: HallwayDeck
   m_EditorClassIdentifier: 
   _hallways:
   - ID: scene_hallway_normal_tests
-    Config: {fileID: 11400000, guid: aa81cf56d8b55224898283fdcde7682f, type: 2}
+    Config: {fileID: 11400000, guid: 859915b6f460d744d8dfac36b428424e, type: 2}
     Quantity: 3
   - ID: scene_hallway_anomaly_1_tests
-    Config: {fileID: 11400000, guid: 51df6e3e5512f3c4682686b348e143a1, type: 2}
+    Config: {fileID: 11400000, guid: dcbb66fc654fa4648a69e95892c72ad9, type: 2}
     Quantity: 1
-  - ID: scene_hallway_anomaly_2_tests
-    Config: {fileID: 11400000, guid: 07ac144587c6c8f4ebc1738b28060781, type: 2}
+  - ID: scene_hallway_normal_tests
+    Config: {fileID: 11400000, guid: 113f8cb9174302e459ef74a982b08fcd, type: 2}
     Quantity: 1

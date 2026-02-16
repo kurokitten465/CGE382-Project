@@ -24,12 +24,6 @@ MonoBehaviour:
     m_path: Assets/_Project/Bootstrapper.unity
   - m_enabled: 1
     m_path: Assets/_Project/Scenes/scene_main.unity
-  - m_enabled: 1
-    m_path: Assets/_Project/Scenes/scene_hallway_normal_tests.unity
-  - m_enabled: 1
-    m_path: Assets/_Project/Scenes/scene_hallway_anomaly_1_tests.unity
-  - m_enabled: 1
-    m_path: Assets/_Project/Scenes/scene_hallway_anomaly_2_tests.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings: []

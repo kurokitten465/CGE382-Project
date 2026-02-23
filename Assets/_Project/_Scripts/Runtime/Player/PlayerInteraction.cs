@@ -24,13 +24,13 @@ namespace PingPingProduction.ProjectAnomaly.Player {
 
         private void OnEnable() {
             if (_inputReader != null) {
-                _inputReader.OnInteractedEvent += OnInteractInput;
+                
             }
         }
 
         private void OnDisable() {
             if (_inputReader != null) {
-                _inputReader.OnInteractedEvent -= OnInteractInput;
+                
             }
         }
 

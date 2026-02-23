@@ -1,74 +1,39 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using PingPingProduction.ProjectAnomaly.Utilities;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using System;
+using UnityEngine.SceneManagement;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class GameManager : MonoSingleton<GameManager> {
-        // ------------ GameStates ------------ //
-        [field: SerializeField]
-        public GameState CurremtGameState { get; private set; } = GameState.None;
+        [Header("Startup")]
+        [SerializeField] bool _usedStartUp;
+        [SerializeField] string _mainMenuScene;
 
-        public Action OnGameStateChanged;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void TransitionState(GameState state) {
-            CurremtGameState = state;
-            OnGameStateChanged?.Invoke();
+        void Start() {
+            SceneManager.LoadScene(_mainMenuScene);
         }
 
-        // ------------ Lastest Lift ------------ //
-        [field: SerializeField]
-        public LiftIdentity LastestRideOnLift { get; private set; }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetLastestRideOnLift(LiftIdentity liftIdentity) {
-            LastestRideOnLift = liftIdentity;
+        public bool IsGamePausing { get; private set; } = false;
+        public Action<IPauseContext, bool> OnGamePaused;
+        public void Pause(IPauseContext context) {
+            var isPaused = IsGamePausing = !IsGamePausing;
+            OnGamePaused?.Invoke(context, isPaused);
         }
 
-        // ------------ Progress Level ------------ //
-        public byte RoomIndex = 0;
-        public byte CurrentAnomalyLevel = 0;
-        public byte MaxAnomalyLevel = 0;
+        public Action OnGameRestarting;
+        public void Restart() => OnGameRestarting?.Invoke();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsWin() {
-            return CurrentAnomalyLevel >= MaxAnomalyLevel;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsCorrectAnswer(LiftIdentity liftIdentity, RuntimeHallwayConfig currentHallway) {
-            var isCorrect =
-            (currentHallway.IsAnomaly && liftIdentity == LastestRideOnLift) ||
-            (!currentHallway.IsAnomaly && liftIdentity != LastestRideOnLift);
-
-            if (isCorrect) {
-                if (currentHallway.IsAnomaly) {
-                    CurrentAnomalyLevel++;
-                }
-
-                RoomIndex++;
-
-                return true;
-            }
-            else {
-                CurrentAnomalyLevel = 0;
-                RoomIndex = 0;
-                return false;
-            }
+        public Action<GameState> OnGameStateChanged;
+        public GameState CurrentGameState { get; private set; }
+        public void SetGameState(GameState state) {
+            CurrentGameState = state;
+            OnGameStateChanged?.Invoke(state);
         }
     }
+
+    public interface IPauseContext { }
 
     public enum GameState {
-        None,
-        Observe,
-        Resolve
-    }
-
-    public enum LiftIdentity {
-        LiftYuuki = 0,
-        LiftHina = 1
+        Resolving, Exploring
     }
 }

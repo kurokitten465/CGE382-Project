@@ -1,63 +1,105 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using PingPingProduction.ProjectAnomaly.Core.Input;
+using PingPingProduction.ProjectAnomaly.Core;
 
 namespace PingPingProduction.ProjectAnomaly.Player {
-    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour {
-        [Header("Movement Settings")]
-        [SerializeField]
-        private float _walkSpeed = 5f;
-        [SerializeField]
-        private float _sprintSpeed = 10f;
+        // References
+        [Header("Movement")]
+        [SerializeField] float _walkSpeed = 10f;
+        [SerializeField] float _sprintSpeed = 15f;
+        [SerializeField] float _groundDrag = 2f;
 
         [Header("Dependencies")]
-        [SerializeField]
-        private InputReader _inputReader;
-        
-        private CharacterController _characterCtl;
-        private Transform _camTranform;
-        private Vector3 _playerVelocity = Vector3.zero;
-        private const float GRAVITY = -9.81f;
+        [SerializeField] InputReader _inputReader;
+        [SerializeField] Transform _camTransform;
 
-        public Action<Collider> OnPlayerMoved;
+        // Caching
+        Rigidbody _rb;
+        GameManager _gameManager;
 
-        private void Awake() {
-            _characterCtl = GetComponent<CharacterController>();
-            _camTranform = Camera.main.transform;
+        // Mutable Variables
+        Vector2 _input = Vector2.zero;
+        float _moveSpeed;
+        bool _isSprinting;
+
+        void Awake() {
+            _rb = GetComponent<Rigidbody>();
+            _rb.linearDamping = _groundDrag;
+
+            _gameManager = GameManager.Instance;
         }
 
-        private void OnEnable() {
-            _inputReader.SetActive(true);
-
+        void OnEnable() {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            _inputReader.OnPlayerMove += GetMovement;
+            _inputReader.OnPlayerSprint += GetSprint;
+
+            _gameManager.OnGamePaused += OnPaused;
+
+            _inputReader.Active(InputReader.ActionMap.Player);
         }
 
-        private void OnDisable() {
-            _inputReader.SetActive(false);
-
+        void OnDisable() {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
+            _inputReader.OnPlayerMove -= GetMovement;
+            _inputReader.OnPlayerSprint -= GetSprint;
+
+            _gameManager.OnGamePaused -= OnPaused;
+
+            _inputReader.Deactive(InputReader.ActionMap.Player);
         }
 
-        private void FixedUpdate() {
-            HandleMovement();
+        void FixedUpdate() {
+            Move();
+            SpeedControl();
         }
 
-        private void HandleMovement() {
-            var input = _inputReader.GetMovement();
+        void Move() {
+            var camForward = _camTransform.forward;
+            var camRight = _camTransform.right;
+            
+            camForward.y = 0f;
+            camRight.y = 0f;
+            camForward.Normalize();
+            camRight.Normalize();
+            
+            var moveDirection = camForward * _input.y + camRight * _input.x;
+            _moveSpeed = _isSprinting ? _sprintSpeed : _walkSpeed;
+            _rb.AddForce(_moveSpeed * 10f * moveDirection.normalized, ForceMode.Force);
+        }
 
-            var move = new Vector3(input.x, 0f, input.y);
-            move = _camTranform.forward * move.z + _camTranform.right * move.x;
-            var speed =  _inputReader.IsSprinting() ? _sprintSpeed : _walkSpeed;
+        void SpeedControl() {
+            var flatVal = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
-            _characterCtl.Move(move * speed);
+            if (flatVal.magnitude > _moveSpeed) {
+                var limitedSpeed = flatVal.normalized * _moveSpeed;
+                _rb.linearVelocity = new Vector3(limitedSpeed.x, _rb.linearVelocity.y, limitedSpeed.z);
+            }
+        }
 
-            var yVelocity = _characterCtl.isGrounded ? 0f : GRAVITY;
-            _playerVelocity.y = yVelocity;
+        void GetMovement(InputAction.CallbackContext context) {
+            _input = context.ReadValue<Vector2>();
+        }
 
-            _characterCtl.Move(_playerVelocity);
+        private void GetSprint(InputAction.CallbackContext context) {
+            _isSprinting = context.phase == InputActionPhase.Performed;
+        }
+
+        private void OnPaused(IPauseContext context, bool isPaused) {
+            if (isPaused) {
+                _inputReader.DeactiveAll();
+            }
+            else {
+                _inputReader.Active(InputReader.ActionMap.Player);
+            }
         }
     }
 }

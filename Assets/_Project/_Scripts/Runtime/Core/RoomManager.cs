@@ -1,96 +1,82 @@
-using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System;
+using PingPingProduction.ProjectAnomaly.Interaction;
+using PingPingProduction.ProjectAnomaly.Player;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
-    public class RoomManager : MonoBehaviour {
-        [Header("Scene Tranforms")]
-        [SerializeField] private Transform _sceneInitPos;
-        [SerializeField] private Transform _sceneEndedPos;
+    public class RoomManager : MonoBehaviour, IPauseContext {
+        [Header("Settings")]
+        [SerializeField] Transform _hallwaySpawner;
+        [SerializeField] Transform _hallwayDestroyer;
 
-        [Header("Deck Config")]
-        [SerializeField]
-        private HallwayDeck _deckSource;
-        [SerializeField]
-        private HallwayConfig _starterRoomConfig;
-        private RuntimeHallwayConfig _starterRoomRuntimeConfig;
+        [Header("Animation & Transition")]
+        [SerializeField] string _elevatorOpeningAnimName;
+        [SerializeField] string _elevatorClosingAnimName;
+        [SerializeField] float _elevatorUpDuration;
+        [SerializeField] Animator _yuukiElevatorAnimator;
+        [SerializeField] Animator _hinaElevatorAnimator;
 
-        private Queue<RuntimeHallwayConfig> _currentDeck;
-        private readonly List<RuntimeHallwayConfig> _hallwayPools = new();
+        [Header("Dependencies")]
+        [SerializeField] HallwayConfig _initializeConfig;
 
-        private RuntimeHallwayConfig _currentRuntimeHallwayConfig;
-        private GameObject _currentHallwayObject;
-        private RuntimeHallwayConfig _oldRuntimeHallwayConfig;
-        private GameObject _oldHallwayObject;
+        // Members
+        GameObject _currentHallway;
+        GameObject _oldHallway;
 
-        private void Awake() {
-            InitializeDeck();
-            ShuffleDeck();
-            InstantiateStarter();
+        GameManager _gameManager;
+        CancellationTokenSource _cts;
+
+        void Awake() {
+            _cts = new();
         }
 
-        private void InitializeDeck() {
-            _starterRoomRuntimeConfig = new(_starterRoomConfig.SceneHolder, _starterRoomConfig.IsAnomaly);
-
-            foreach (var hallwayConfig in _deckSource.Hallways) {
-                for (int i = 0; i < hallwayConfig.Quantity; i++) {
-                    _hallwayPools.Add(new(hallwayConfig.Config.SceneHolder, hallwayConfig.Config.IsAnomaly));
-                }
-            }
-
-            for (int i = 0; i < _hallwayPools.Count; i++) {
-                if (_hallwayPools[i].IsAnomaly)
-                    GameManager.Instance.MaxAnomalyLevel++;
-            }
+        void Start() {
+            _gameManager = GameManager.Instance;
+            OnGameStarted().Forget();
         }
 
-        private void ShuffleDeck() {
-            for (int i = 0; i < _hallwayPools.Count; i++) {
-                int rand = UnityEngine.Random.Range(i, _hallwayPools.Count);
-
-                (_hallwayPools[i], _hallwayPools[rand]) = (_hallwayPools[rand], _hallwayPools[i]);
-            }
-
-            _currentDeck = new(_hallwayPools);
+        void OnDestroy() {
+            _cts.Cancel();
         }
 
-        private async UniTask LoadNextHallway() {
-            _oldHallwayObject = _currentHallwayObject;
-            _oldRuntimeHallwayConfig = _currentRuntimeHallwayConfig;
+        async UniTaskVoid OnGameStarted() {
+            _gameManager.Pause(this);
 
-            _currentRuntimeHallwayConfig = _currentDeck.Dequeue();
+            _currentHallway = Instantiate(_initializeConfig.HallwayPrefab, new Vector3(0f, 5f, 0f), Quaternion.identity);
 
-            _currentHallwayObject = (await InstantiateAsync(_currentRuntimeHallwayConfig.HallwayPrefab, _sceneInitPos.position, Quaternion.identity).ToUniTask())[0];
+            await _currentHallway.transform
+                    .DOMoveY(0f, _elevatorUpDuration / 2f)
+                    .AsyncWaitForCompletion()
+                    .AsUniTask()
+                    .AttachExternalCancellation(_cts.Token);
 
-            _oldHallwayObject.transform.DOLocalMoveY(_sceneEndedPos.transform.position.y, 3f);
-            _currentHallwayObject.transform.DOLocalMoveY(0, 3f);
+            _yuukiElevatorAnimator.Play(_elevatorOpeningAnimName);
+            _hinaElevatorAnimator.Play(_elevatorOpeningAnimName);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(3), ignoreTimeScale: false);
-
-            Destroy(_oldHallwayObject);
+            await UniTask.Delay(2500);
+            _gameManager.Pause(this);
         }
 
-        private void InstantiateStarter() {
-            _currentRuntimeHallwayConfig = _starterRoomRuntimeConfig;
-            _currentHallwayObject = Instantiate(_starterRoomRuntimeConfig.HallwayPrefab, Vector3.zero, Quaternion.identity);
+        public void OnLiftTriggered(ElevatorTrigger trigger, PlayerController player) {
+            _gameManager.SetGameState(GameState.Resolving);
+            OnLoadNextHallway(trigger).Forget();
         }
 
-        public void OnLiftEntered(LiftIdentity liftIdentity) {
-            if (GameManager.Instance.IsCorrectAnswer(liftIdentity, _currentRuntimeHallwayConfig)) {
-                if (GameManager.Instance.IsWin()) {
-                    Debug.Log($"Win");
-                    return;
-                }
+        async UniTaskVoid OnLoadNextHallway(ElevatorTrigger trigger) {
+            trigger.ElevatorCam.Priority = 100;
 
-                LoadNextHallway().Forget();
-            }
-            else {
-                ShuffleDeck();
-                LoadNextHallway().Forget();
-            }
+            await UniTask.Delay(1000);
+
+            _yuukiElevatorAnimator.Play(_elevatorClosingAnimName);
+            _hinaElevatorAnimator.Play(_elevatorClosingAnimName);
+
+            _gameManager.Pause(this);
+            await UniTask.Delay(2500);
+
+            trigger.ElevatorCam.Priority = -100;
         }
     }
 }
+

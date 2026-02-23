@@ -4,43 +4,86 @@ using UnityEngine.InputSystem;
 
 namespace PingPingProduction.ProjectAnomaly.Core.Input {
     [CreateAssetMenu(fileName = "InputReader", menuName = "Project/InputReader")]
-    public class InputReader : ScriptableObject {
+    public class InputReader : ScriptableObject, GameInputActions.IPlayerActions {
+        public enum ActionMap {
+            Player, UI
+        }
+
         private GameInputActions _inputActions;
 
-        public Action OnInteractedEvent;
+        #region Events
+        public Action<InputAction.CallbackContext> OnPlayerMove;
+        public Action<InputAction.CallbackContext> OnPlayerLook;
+        public Action<InputAction.CallbackContext> OnPlayerInteract;
+        public Action<InputAction.CallbackContext> OnPlayerSprint;
+        #endregion
 
-        private void OnEnable() {
-            _inputActions ??= new();
+        #region Initialize
+        void OnEnable() {
+            _inputActions = new();
+
+            _inputActions.Player.AddCallbacks(this);
         }
 
-        public void SetActive(bool active) {
-            _inputActions ??= new();
+        void OnDestroy() {
+            _inputActions.Player.RemoveCallbacks(this);
 
-            if (active) {
-                _inputActions.Enable();
+            _inputActions.Dispose();
+        }
+        #endregion
 
-                _inputActions.Player.Interact.started += OnInteracted;
+        #region Input Handler
+        public void OnMove(InputAction.CallbackContext context) {
+            OnPlayerMove?.Invoke(context);
+        }
+
+        public void OnLook(InputAction.CallbackContext context) {
+            OnPlayerLook?.Invoke(context);
+        }
+
+        public void OnInteract(InputAction.CallbackContext context) {
+            OnPlayerInteract?.Invoke(context);
+        }
+
+        public void OnSprint(InputAction.CallbackContext context) {
+            OnPlayerSprint?.Invoke(context);
+        }
+        #endregion
+
+        #region  Active Action Map
+        public void Active(ActionMap map) {
+            if (map == ActionMap.Player) {
+                _inputActions.Player.Enable();
             }
             else {
-                _inputActions.Enable();
-                
-                _inputActions.Player.Interact.started -= OnInteracted;
+                _inputActions.InGameUI.Enable();
             }
         }
 
-        private void OnInteracted(InputAction.CallbackContext context) {
-            if (context.phase != InputActionPhase.Started) return;
-            
-            OnInteractedEvent?.Invoke();
+        public void Deactive(ActionMap map) {
+            if (map == ActionMap.Player) {
+                _inputActions.Player.Disable();
+            }
+            else {
+                _inputActions.InGameUI.Disable();
+            }
         }
 
-        public Vector2 GetMovement() =>
-            _inputActions.Player.Move.ReadValue<Vector2>();
+        public void SwitchMapTo(ActionMap map) {
+            if (map == ActionMap.Player) {
+                _inputActions.Player.Enable();
+                _inputActions.InGameUI.Disable();
+            }
+            else {
+                _inputActions.Player.Disable();
+                _inputActions.InGameUI.Enable();
+            }
+        }
 
-        public Vector2 GetMouseDelta() =>
-            _inputActions.Player.Look.ReadValue<Vector2>();
-
-        public bool IsSprinting() =>
-            _inputActions.Player.Sprint.IsInProgress();
+        public void DeactiveAll() {
+            _inputActions.Player.Disable();
+            _inputActions.InGameUI.Disable();
+        }
+        #endregion
     }
 }

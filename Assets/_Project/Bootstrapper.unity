@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000002, guid: 75a314ea585a4004c93a28131daaa60f, type: 2}
+  m_LightingDataAsset: {fileID: 112000002, guid: 2d644ee40ed7e0f4f89abc29d6b8307d, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 1e011e9078f42b748a405906ada0f4f9, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -128,7 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 376648714}
-  - component: {fileID: 376648713}
+  - component: {fileID: 376648715}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -136,24 +136,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &376648713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 376648712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d831ccc5d785e5043b4f31101c39dae8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsPersistent: 1
-  <CurremtGameState>k__BackingField: 0
-  <LastestRideOnLift>k__BackingField: 0
-  RoomIndex: 0
-  CurrentAnomalyLevel: 0
-  MaxAnomalyLevel: 0
 --- !u!4 &376648714
 Transform:
   m_ObjectHideFlags: 0
@@ -170,6 +152,21 @@ Transform:
   - {fileID: 443253664}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &376648715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376648712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d831ccc5d785e5043b4f31101c39dae8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsPersistent: 1
+  _usedStartUp: 1
+  _mainMenuScene: scene_main_menu
 --- !u!1 &443253661
 GameObject:
   m_ObjectHideFlags: 0

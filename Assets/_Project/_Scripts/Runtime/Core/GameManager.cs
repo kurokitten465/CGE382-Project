@@ -10,7 +10,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         [SerializeField] string _mainMenuScene;
 
         void Start() {
-            SceneManager.LoadScene(_mainMenuScene);
+            if (_usedStartUp)
+                SceneManager.LoadScene(_mainMenuScene);
         }
 
         public bool IsGamePausing { get; private set; } = false;

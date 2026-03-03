@@ -15,9 +15,9 @@ namespace PingPingProduction.ProjectAnomaly.Player {
 
         [Header("Dependencies")]
         [SerializeField] InputReader _inputReader;
-        [SerializeField] Transform _camTransform;
 
         // Caching
+        Transform _camTransform;
         Rigidbody _rb;
         GameManager _gameManager;
 
@@ -31,6 +31,10 @@ namespace PingPingProduction.ProjectAnomaly.Player {
             _rb.linearDamping = _groundDrag;
 
             _gameManager = GameManager.Instance;
+        }
+
+        void Start() {
+            _camTransform = Camera.main.transform;
         }
 
         void OnEnable() {

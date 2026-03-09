@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace PingPingProduction.ProjectAnomaly.Core.Input {
     [CreateAssetMenu(fileName = "InputReader", menuName = "Project/InputReader")]
-    public class InputReader : ScriptableObject, GameInputActions.IPlayerActions {
+    public class InputReader : ScriptableObject, GameInputActions.IPlayerActions, GameInputActions.IUIActions {
         public enum ActionMap {
             Player, UI
         }
@@ -16,6 +16,7 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
         public Action<InputAction.CallbackContext> OnPlayerLook;
         public Action<InputAction.CallbackContext> OnPlayerInteract;
         public Action<InputAction.CallbackContext> OnPlayerSprint;
+        public Action<InputAction.CallbackContext> OnPlayerPaused;
         #endregion
 
         #region Initialize
@@ -23,10 +24,12 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
             _inputActions = new();
 
             _inputActions.Player.AddCallbacks(this);
+            _inputActions.UI.AddCallbacks(this);
         }
 
         void OnDestroy() {
             _inputActions.Player.RemoveCallbacks(this);
+            _inputActions.UI.RemoveCallbacks(this);
 
             _inputActions.Dispose();
         }
@@ -47,6 +50,14 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
 
         public void OnSprint(InputAction.CallbackContext context) {
             OnPlayerSprint?.Invoke(context);
+        }
+
+        public void OnPause(InputAction.CallbackContext context) {
+            OnPlayerPaused?.Invoke(context);
+
+            if (context.phase != InputActionPhase.Canceled) return;
+
+            GameManager.Instance.Pause();
         }
         #endregion
 
@@ -83,6 +94,52 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
         public void DeactiveAll() {
             _inputActions.Player.Disable();
             _inputActions.UI.Disable();
+        }
+
+        public void OnNavigate(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnSubmit(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnCancel(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnPoint(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnClick(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnRightClick(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnMiddleClick(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnScrollWheel(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnTrackedDevicePosition(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnTrackedDeviceOrientation(InputAction.CallbackContext context) {
+            
+        }
+
+        public void OnUnPause(InputAction.CallbackContext context) {
+            if (context.phase != InputActionPhase.Canceled) return;
+
+            GameManager.Instance.Pause();
         }
         #endregion
     }

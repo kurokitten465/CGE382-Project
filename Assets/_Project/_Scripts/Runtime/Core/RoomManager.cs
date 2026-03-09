@@ -37,6 +37,10 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         Animator _yuukiDoorAnimator;
         Animator _hinaDoorAnimator;
 
+        const byte MAX_ANOMALY_ATTEMPTS = 4;
+        byte _minAnomalyAttempts = 0;
+        byte _curremtAnomalyAttempts = 0;
+
         readonly HashSet<byte> _lastAnomalyIndex = new();
         GameObject _currentHallwayGO;
         GameObject _previousHallwayGO;
@@ -59,6 +63,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
             PreviousHallway = CurrentHallway;
             CurrentHallway = _hallwayRegistry.Hallways[index];
+            _minAnomalyAttempts = (byte)Random.Range(1, MAX_ANOMALY_ATTEMPTS + 1);
             if (_currentHallwayGO != null) Destroy(_currentHallwayGO);
 
             var obj = Instantiate(CurrentHallway.HallwayPrefab, Vector3.zero, Quaternion.identity);
@@ -97,8 +102,10 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             float roll = Random.value;
 
             // 60% normal room
-            if (roll > _anomalyChance)
+            if (roll > _anomalyChance && _curremtAnomalyAttempts <= _minAnomalyAttempts) {
+                _curremtAnomalyAttempts++;
                 return _hallwayRegistry.Hallways[0];
+            }
 
             // anomaly selection
             byte anomalyCount = (byte)(_hallwayRegistry.Hallways.Count - 1);
@@ -113,6 +120,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             while (_lastAnomalyIndex.Contains(randomIndex) && anomalyCount > 1);
 
             _lastAnomalyIndex.Add(randomIndex);
+            _curremtAnomalyAttempts = 0;
+            _minAnomalyAttempts = (byte)Random.Range(1, MAX_ANOMALY_ATTEMPTS + 1);
 
             return _hallwayRegistry.Hallways[randomIndex];
         }

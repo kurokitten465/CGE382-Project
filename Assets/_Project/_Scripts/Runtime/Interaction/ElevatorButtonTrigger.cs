@@ -1,6 +1,7 @@
 using UnityEngine;
 using PingPingProduction.ProjectAnomaly.Interaction;
 using PingPingProduction.ProjectAnomaly.Core;
+using TMPro;
 
 namespace PingPingProduction.ProjectAnomaly.Interaction {
     public class ElevatorButtonTrigger : MonoBehaviour, IInteractable {
@@ -10,6 +11,10 @@ namespace PingPingProduction.ProjectAnomaly.Interaction {
         [Header("Dependencies")]
         [SerializeField] ElevatorTrigger _elevatorTrigger;
         [SerializeField] Animator _elevatorBtnAnimator;
+        [SerializeField] GameObject _WTMP;
+        [SerializeField] Vector3 _offsets;
+
+        GameObject _currentWTMP;
 
         public ElevatorTrigger ElevatorTrigger => _elevatorTrigger;
 
@@ -32,10 +37,19 @@ namespace PingPingProduction.ProjectAnomaly.Interaction {
 
         public void OnPointedAt() {
             if (!_isPlayerInside) return;
+
+            _currentWTMP = Instantiate(_WTMP, transform.position + _offsets, transform.rotation);
+            var canvas = _currentWTMP.GetComponent<Canvas>();
+            canvas.worldCamera = Camera.main;
+            var tmp = _currentWTMP.GetComponentInChildren<TMP_Text>();
+            var text = ElevatorDirection == ElevatorButtonDirection.Upward ? "Move Up" : "Move Down";
+            tmp.text = text;
         }
 
         public void OnPointedAway() {
             if (!_isPlayerInside) return;
+
+            Destroy(_currentWTMP);
         }
     }
 

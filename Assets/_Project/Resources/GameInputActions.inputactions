@@ -41,6 +41,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "2676db4f-7c0e-4158-8458-a38f4e2a5874",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -159,7 +168,7 @@
                     "id": "cac548d4-8881-4d47-b810-7bcb8d82237a",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "DeltaTimeScale,ScaleVector2(x=2,y=2)",
                     "groups": ";Gamepad;GamePad",
                     "action": "Look",
                     "isComposite": false,
@@ -170,7 +179,7 @@
                     "id": "b0b5c393-ae7e-46a0-a68e-e6b8c94d8f2c",
                     "path": "<Pointer>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "DeltaTimeScale,ScaleVector2(x=0.5,y=0.5)",
                     "groups": ";Keyboard&Mouse;Touch;PC_Controoller",
                     "action": "Look",
                     "isComposite": false,
@@ -190,7 +199,7 @@
                 {
                     "name": "",
                     "id": "123a2049-f981-4325-b3f6-ec7adb7aaa19",
-                    "path": "<Gamepad>/leftStickPress",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad;GamePad",
@@ -212,11 +221,33 @@
                 {
                     "name": "",
                     "id": "7fe352cb-7fd0-4cd5-8881-7cb9c5421bd6",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad;GamePad",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d3b57791-a3e7-46ea-92b7-5c6a5e4dabe3",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC_Controoller",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "853fb4fa-a794-48a6-bef3-ce9a4717da28",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamePad",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -226,6 +257,15 @@
             "name": "UI",
             "id": "d73c960b-3f74-4e05-9cdd-4b60ffa7ff43",
             "actions": [
+                {
+                    "name": "UnPause",
+                    "type": "Button",
+                    "id": "3ffb7cc8-72ce-447a-a4a5-8e3f45cbe50e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
                 {
                     "name": "Navigate",
                     "type": "PassThrough",
@@ -239,7 +279,7 @@
                     "name": "Submit",
                     "type": "Button",
                     "id": "80c3eaff-836b-4dad-b931-5e95838c8de1",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -248,7 +288,7 @@
                     "name": "Cancel",
                     "type": "Button",
                     "id": "72cbb496-4998-476a-89fb-64d82c883643",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -584,8 +624,41 @@
                 },
                 {
                     "name": "",
+                    "id": "3a76a6b7-673f-4f15-9faf-c603e4a9b774",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC_Controoller",
+                    "action": "UnPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6301e840-673a-4aab-9a89-35539af82c38",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamePad",
+                    "action": "UnPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "4067e08e-40ae-447e-8062-9705cf00446b",
-                    "path": "*/{Submit}",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1cee4094-8862-481e-8cd3-9da773c22a50",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
@@ -596,7 +669,7 @@
                 {
                     "name": "",
                     "id": "aefe800f-7c33-48db-ba1f-01b1039ed9b8",
-                    "path": "*/{Cancel}",
+                    "path": "<Keyboard>/backspace",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",

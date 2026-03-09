@@ -34,10 +34,16 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         public bool Pause() {
             IsPause = !IsPause;
 
-            if (IsPause)
+            if (IsPause) {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = false;
                 _inputReader.SwitchMapTo(InputReader.ActionMap.UI);
-            else
+            }
+            else {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = true;
                 _inputReader.SwitchMapTo(InputReader.ActionMap.Player);
+            }
 
             OnGamePaused?.Invoke(IsPause);
 

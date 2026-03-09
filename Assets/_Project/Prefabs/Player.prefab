@@ -480,8 +480,8 @@ MonoBehaviour:
   _sprintSpeed: 3
   _groundDrag: 1
   _audio: {fileID: 5209627503741625267}
-  _walkStepInterval: 0.5
-  _sprintStepInterval: 0.35
+  _walkStepInterval: 0.35
+  _sprintStepInterval: 0.3
   _carpetSteps:
   - {fileID: 8300000, guid: bdebdb04a0f9ebd47807a60abede9ac0, type: 3}
   - {fileID: 8300000, guid: 7c352eff21cb489438dd62e34ffc572e, type: 3}

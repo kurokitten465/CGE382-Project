@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PingPingProduction.ProjectAnomaly.Core;
@@ -5,27 +6,38 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace PingPingProduction.ProjectAnomaly.UI {
-    public class MainMenuController : MonoBehaviour {
-        [SerializeField] string _gameScene;
-        [SerializeField] AudioSource _audio;
+    public class GameMenuController : MonoBehaviour {
+        [SerializeField] string _mainMenuScene;
+        [SerializeField] GameObject _gameMenuPanel;
 
         void Start() {
-            GameManager.Instance.FadingCanvas.DOFade(0f, 2f);
+            GameManager.OnGamePaused += OnPaused;
         }
 
-        public void OnStartButtonClicked() {
+        void OnDestroy() {
+            GameManager.OnGamePaused -= OnPaused;
+        }
+
+        void OnPaused(bool isPaused) {
+            _gameMenuPanel.SetActive(isPaused);
+        }
+
+        public void OnMainMenuButtonClicked() {
             OnLoading().Forget();
         }
 
+        public void OnContinueButtonClicked() {
+            GameManager.Instance.Pause();
+        }
+
         public async UniTaskVoid OnLoading() {
-            _audio.Play();
             await GameManager.Instance.FadingCanvas
-                    .DOFade(1f, 5f)
+                    .DOFade(1f, 3f)
                     .From(0f, true)
                     .AsyncWaitForCompletion()
                     .AsUniTask();
 
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_gameScene);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_mainMenuScene);
 
             // Stop the scene from activating immediately
             asyncLoad.allowSceneActivation = false;

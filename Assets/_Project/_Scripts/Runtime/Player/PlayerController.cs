@@ -13,24 +13,29 @@ namespace PingPingProduction.ProjectAnomaly.Player {
         [SerializeField] float _sprintSpeed = 15f;
         [SerializeField] float _groundDrag = 2f;
 
+        [Header("Footsteps")]
+        [SerializeField] AudioSource _audio;
+        [SerializeField] float _walkStepInterval = 0.5f;
+        [SerializeField] float _sprintStepInterval = 0.35f;
+        [SerializeField] AudioClip[] _carpetSteps;
+        [SerializeField] AudioClip[] _woodSteps;
+
         [Header("Dependencies")]
         [SerializeField] InputReader _inputReader;
 
         // Caching
         Transform _camTransform;
         Rigidbody _rb;
-        GameManager _gameManager;
 
         // Mutable Variables
         Vector2 _input = Vector2.zero;
         float _moveSpeed;
         bool _isSprinting;
+        float _stepTimer;
 
         void Awake() {
             _rb = GetComponent<Rigidbody>();
             _rb.linearDamping = _groundDrag;
-
-            _gameManager = GameManager.Instance;
         }
 
         void Start() {
@@ -43,10 +48,6 @@ namespace PingPingProduction.ProjectAnomaly.Player {
 
             _inputReader.OnPlayerMove += GetMovement;
             _inputReader.OnPlayerSprint += GetSprint;
-
-            _gameManager.OnGamePaused += OnPaused;
-
-            _inputReader.Active(InputReader.ActionMap.Player);
         }
 
         void OnDisable() {
@@ -55,15 +56,12 @@ namespace PingPingProduction.ProjectAnomaly.Player {
 
             _inputReader.OnPlayerMove -= GetMovement;
             _inputReader.OnPlayerSprint -= GetSprint;
-
-            _gameManager.OnGamePaused -= OnPaused;
-
-            _inputReader.Deactive(InputReader.ActionMap.Player);
         }
 
         void FixedUpdate() {
             Move();
             SpeedControl();
+            HandleFootsteps();
         }
 
         void Move() {
@@ -89,21 +87,44 @@ namespace PingPingProduction.ProjectAnomaly.Player {
             }
         }
 
+        void HandleFootsteps() {
+            Vector3 flatVel = new(_rb.linearVelocity.x, 0, _rb.linearVelocity.z);
+
+            if (flatVel.magnitude < 0.15f) return;
+
+            float interval = _isSprinting ? _sprintStepInterval : _walkStepInterval;
+
+            _stepTimer -= Time.fixedDeltaTime;
+
+            if (_stepTimer > 0) return;
+
+            _stepTimer = interval;
+
+            PlayFootstep();
+        }
+
+        void PlayFootstep() {
+            if (!Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 2f))
+                return;
+
+            AudioClip[] clips = null;
+
+            if (hit.collider.CompareTag("Carpet"))
+                clips = _carpetSteps;
+            else if (hit.collider.CompareTag("Wood"))
+                clips = _woodSteps;
+
+            if (clips == null || clips.Length == 0) return;
+
+            _audio.PlayOneShot(clips[UnityEngine.Random.Range(0, clips.Length)]);
+        }
+
         void GetMovement(InputAction.CallbackContext context) {
             _input = context.ReadValue<Vector2>();
         }
 
         private void GetSprint(InputAction.CallbackContext context) {
             _isSprinting = context.phase == InputActionPhase.Performed;
-        }
-
-        private void OnPaused(IPauseContext context, bool isPaused) {
-            if (isPaused) {
-                _inputReader.DeactiveAll();
-            }
-            else {
-                _inputReader.Active(InputReader.ActionMap.Player);
-            }
         }
     }
 }

@@ -1,40 +1,80 @@
-using UnityEngine;
-using PingPingProduction.ProjectAnomaly.Utilities;
 using System;
+using UnityEngine;
+using PingPingProduction.ProjectAnomaly.Core.Input;
+using PingPingProduction.ProjectAnomaly.Utilities;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine.SceneManagement;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class GameManager : MonoSingleton<GameManager> {
+        [Header("Fading")]
+        [field: SerializeField] public CanvasGroup FadingCanvas { get; private set; }
+
+        [Header("Dependencies")]
+        [SerializeField] InputReader _inputReader;
+
         [Header("Startup")]
-        [SerializeField] bool _usedStartUp;
-        [SerializeField] string _mainMenuScene;
+        [SerializeField] bool _useStartup;
+        [SerializeField] string _startupScene;
 
-        void Start() {
-            if (_usedStartUp)
-                SceneManager.LoadScene(_mainMenuScene);
+        // Exposing Member
+        public bool IsPause { get; private set; } = false;
+
+        // Init
+        protected override void Awake() {
+            base.Awake();
+            Pause();
+            if (_useStartup)
+                OnLoading().Forget();
         }
 
-        public bool IsGamePausing { get; private set; } = false;
-        public Action<IPauseContext, bool> OnGamePaused;
-        public void Pause(IPauseContext context) {
-            var isPaused = IsGamePausing = !IsGamePausing;
-            OnGamePaused?.Invoke(context, isPaused);
+        // GamePaused
+        public static Action<bool> OnGamePaused;
+        public bool Pause() {
+            IsPause = !IsPause;
+
+            if (IsPause)
+                _inputReader.SwitchMapTo(InputReader.ActionMap.UI);
+            else
+                _inputReader.SwitchMapTo(InputReader.ActionMap.Player);
+
+            OnGamePaused?.Invoke(IsPause);
+
+            return IsPause;
         }
 
-        public Action OnGameRestarting;
-        public void Restart() => OnGameRestarting?.Invoke();
-
-        public Action<GameState> OnGameStateChanged;
-        public GameState CurrentGameState { get; private set; }
-        public void SetGameState(GameState state) {
-            CurrentGameState = state;
-            OnGameStateChanged?.Invoke(state);
+        // GameEnded
+        public static Action OnGameEnded;
+        public void End() {
+            OnGameEnded?.Invoke();
         }
-    }
 
-    public interface IPauseContext { }
+        public async UniTaskVoid OnLoading() {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_startupScene);
 
-    public enum GameState {
-        Resolving, Exploring
+            // Stop the scene from activating immediately
+            asyncLoad.allowSceneActivation = false;
+
+            // Wait until the load is 90% complete (Unity's internal loading stops at 0.9)
+            while (asyncLoad.progress < 0.9f) {
+                // Update UI, etc.
+                await UniTask.Yield();
+            }
+
+            // Now, allow the scene to activate (Awake/Start methods will run now, which can still cause a small hitch)
+            asyncLoad.allowSceneActivation = true;
+
+            // The rest of the while loop handles the final activation
+            while (!asyncLoad.isDone) {
+                await UniTask.Yield();
+            }
+
+            await FadingCanvas
+                    .DOFade(0f, 5f)
+                    .From(1f, true)
+                    .AsyncWaitForCompletion()
+                    .AsUniTask();
+        }
     }
 }

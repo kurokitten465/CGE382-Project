@@ -1,6 +1,8 @@
-using PingPingProduction.ProjectAnomaly.Core.Input;
-using PingPingProduction.ProjectAnomaly.Interaction;
 using UnityEngine;
+using PingPingProduction.ProjectAnomaly.Interaction;
+using PingPingProduction.ProjectAnomaly.Core.Input;
+using UnityEngine.InputSystem;
+using System;
 
 namespace PingPingProduction.ProjectAnomaly.Player {
     public class PlayerInteraction : MonoBehaviour {
@@ -11,10 +13,6 @@ namespace PingPingProduction.ProjectAnomaly.Player {
         [SerializeField] private float _raycastDistance = 100f;
         [SerializeField] private LayerMask _interactableLayer;
 
-        [Header("Debug")]
-        [SerializeField] private Light _light;
-        [SerializeField] private bool _showDebugRay = true;
-
         private Camera _camera;
         private IInteractable _currentPointedInteractable;
 
@@ -23,15 +21,11 @@ namespace PingPingProduction.ProjectAnomaly.Player {
         }
 
         private void OnEnable() {
-            if (_inputReader != null) {
-                
-            }
+            _inputReader.OnPlayerInteract += OnInteractInput;
         }
 
         private void OnDisable() {
-            if (_inputReader != null) {
-                
-            }
+            _inputReader.OnPlayerInteract -= OnInteractInput;
         }
 
         private void Update() {
@@ -41,26 +35,28 @@ namespace PingPingProduction.ProjectAnomaly.Player {
         private void PerformRaycast() {
             Ray ray = _camera.ScreenPointToRay(_camera.pixelRect.center);
 
-            if (_showDebugRay) {
-                Debug.DrawRay(ray.origin, ray.direction * _raycastDistance, Color.green);
-            }
+            Debug.DrawRay(ray.origin, ray.direction * _raycastDistance, Color.green);
 
             if (Physics.Raycast(ray, out RaycastHit hit, _raycastDistance, _interactableLayer)) {
-                if (hit.collider.TryGetComponent<IInteractable>(out var interactable)) {
-                    if (_currentPointedInteractable != interactable) {
+                if (hit.collider.gameObject.TryGetComponent<IInteractable>(out var interactable)) {
+                    if (_currentPointedInteractable != interactable || _currentPointedInteractable == null) {
                         _currentPointedInteractable?.OnPointedAway();
                         _currentPointedInteractable = interactable;
                         _currentPointedInteractable.OnPointedAt();
                     }
-                } else {
+                }
+                else {
                     ClearPointedInteractable();
                 }
-            } else {
+            }
+            else {
                 ClearPointedInteractable();
             }
         }
 
-        private void OnInteractInput() {
+        private void OnInteractInput(InputAction.CallbackContext context) {
+            if (context.phase != InputActionPhase.Canceled) return;
+
             _currentPointedInteractable?.Interact();
         }
 

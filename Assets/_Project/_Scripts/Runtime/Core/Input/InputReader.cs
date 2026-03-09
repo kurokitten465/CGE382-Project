@@ -56,7 +56,7 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
                 _inputActions.Player.Enable();
             }
             else {
-                _inputActions.InGameUI.Enable();
+                _inputActions.UI.Enable();
             }
         }
 
@@ -65,24 +65,24 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
                 _inputActions.Player.Disable();
             }
             else {
-                _inputActions.InGameUI.Disable();
+                _inputActions.UI.Disable();
             }
         }
 
         public void SwitchMapTo(ActionMap map) {
             if (map == ActionMap.Player) {
                 _inputActions.Player.Enable();
-                _inputActions.InGameUI.Disable();
+                _inputActions.UI.Disable();
             }
             else {
                 _inputActions.Player.Disable();
-                _inputActions.InGameUI.Enable();
+                _inputActions.UI.Enable();
             }
         }
 
         public void DeactiveAll() {
             _inputActions.Player.Disable();
-            _inputActions.InGameUI.Disable();
+            _inputActions.UI.Disable();
         }
         #endregion
     }

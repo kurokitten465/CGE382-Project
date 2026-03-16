@@ -444,7 +444,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxAnomalyFounded: 6
   _roomManager: {fileID: 275460758}
-  _tmp: {fileID: 661506054}
 --- !u!4 &95344502 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: eddeba56c1cf7cf4299398f8b7586d14, type: 3}
@@ -714,17 +713,7 @@ MonoBehaviour:
   _hallwayTopPoint: {fileID: 1115139634}
   _hallwayBelowpoint: {fileID: 681332909}
   _hallwayRegistry: {fileID: 11400000, guid: 540074f934f34e64eb7a1823f7fc220e, type: 2}
-  _yuukiElevatorAnimator: {fileID: 279379519}
-  _hinaElevatorAnimator: {fileID: 284157866}
-  _elevatorDoorOpening: anim_elevator_opening
-  _elevatorDoorClosing: anim_elevator_closing
-  _elevatorDuration: 7
-  _elevatorOpemCLoseDuration: 3
-  _yuukiElevatorAudioSource: {fileID: 279379522}
-  _hinaElevatorAudioSource: {fileID: 284157869}
-  _elevatorLoopClip: {fileID: 8300000, guid: 0b640c167b244b14280a6fa39d5b7cf7, type: 3}
-  _elevatorOpenClip: {fileID: 8300000, guid: 6eb5832909abc064ab0a0c55c16cb909, type: 3}
-  _elevatorCloseClip: {fileID: 8300000, guid: c7fa4e185617a0145aef5b5a21b1c982, type: 3}
+  _elevatorSequencer: {fileID: 1393495386}
 --- !u!1 &279379517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3704,6 +3693,59 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 0.1, z: 3}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1393495384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1393495385}
+  - component: {fileID: 1393495386}
+  m_Layer: 0
+  m_Name: Elevator Sequencer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1393495385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393495384}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1393495386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393495384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b94cab9ee2b1f014eb559ba9cdaa1072, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _yuukiElevatorAnimator: {fileID: 279379519}
+  _hinaElevatorAnimator: {fileID: 284157866}
+  _elevatorMoveDuration: 6
+  _elevatorOpenCloseDuration: 3
+  _yuukiElevatorAudioSource: {fileID: 279379522}
+  _hinaElevatorAudioSource: {fileID: 284157869}
+  _elevatorLoopClip: {fileID: 8300000, guid: 0b640c167b244b14280a6fa39d5b7cf7, type: 3}
+  _elevatorOpenClip: {fileID: 8300000, guid: 6eb5832909abc064ab0a0c55c16cb909, type: 3}
+  _elevatorCloseClip: {fileID: 8300000, guid: c7fa4e185617a0145aef5b5a21b1c982, type: 3}
 --- !u!1 &1404803189 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5570366584037414043, guid: fd56173a283d4c44ea62ac850286fb72, type: 3}
@@ -3929,6 +3971,63 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 2, z: 0.1}
   m_Center: {x: 0, y: 1, z: 1.4}
+--- !u!1001 &1546728275
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376015441530937353, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2275263872391141976, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
+      propertyPath: m_Name
+      value: Hallway_01_Down_DefaultRoom
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ecf018c445299e64298680fc80fb2c77, type: 3}
 --- !u!1 &1595578221 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -2470517518154699253, guid: fd56173a283d4c44ea62ac850286fb72, type: 3}
@@ -4868,7 +4967,7 @@ Transform:
   m_GameObject: {fileID: 2050765648}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.6, y: 1, z: 0}
+  m_LocalPosition: {x: -1, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5128,6 +5227,7 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 821202627}
   - {fileID: 275460757}
+  - {fileID: 1393495385}
   - {fileID: 52830440}
   - {fileID: 3956144616651791295}
   - {fileID: 894022112}
@@ -5139,3 +5239,4 @@ SceneRoots:
   - {fileID: 882718949}
   - {fileID: 1410057696}
   - {fileID: 376299383}
+  - {fileID: 1546728275}

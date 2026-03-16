@@ -9,15 +9,20 @@ namespace PingPingProduction.ProjectAnomaly.UI {
         [SerializeField] string _gameScene;
         [SerializeField] AudioSource _audio;
 
+        bool _isClicked = false;
+
         void Start() {
             GameManager.Instance.FadingCanvas.DOFade(0f, 2f);
         }
 
         public void OnStartButtonClicked() {
-            OnLoading().Forget();
+            if (!_isClicked)
+                OnLoading().Forget();
         }
 
         public async UniTaskVoid OnLoading() {
+            _isClicked = true;
+
             _audio.Play();
             await GameManager.Instance.FadingCanvas
                     .DOFade(1f, 5f)

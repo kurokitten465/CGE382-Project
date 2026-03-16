@@ -3,7 +3,6 @@ using UnityEngine;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using PingPingProduction.ProjectAnomaly.Interaction;
-using System.Threading.Tasks;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class ProgressManager : MonoBehaviour {
@@ -12,7 +11,6 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
         [Header("Depemdencies")]
         [SerializeField] RoomManager _roomManager;
-        [SerializeField] GameObject _tmp;
 
         public static Action<ElevatorButtonTrigger> OnElevatorButtonTriggered;
         public static bool IsResolving = false;
@@ -66,7 +64,6 @@ namespace PingPingProduction.ProjectAnomaly.Core {
                 Debug.Log($"Win! Progrees: {_anomalyFounded}/{_maxAnomalyFounded}");
 
                 if (_anomalyFounded != _maxAnomalyFounded) return;
-                _tmp.SetActive(true);
             }
         }
 

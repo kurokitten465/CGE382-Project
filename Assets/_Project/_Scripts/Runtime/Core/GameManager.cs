@@ -36,12 +36,12 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
             if (IsPause) {
                 Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = false;
+                Cursor.visible = true;
                 _inputReader.SwitchMapTo(InputReader.ActionMap.UI);
             }
             else {
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = true;
+                Cursor.visible = false;
                 _inputReader.SwitchMapTo(InputReader.ActionMap.Player);
             }
 

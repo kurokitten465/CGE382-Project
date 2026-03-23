@@ -12,11 +12,14 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
         private GameInputActions _inputActions;
 
         #region Events
+        // Player
         public Action<InputAction.CallbackContext> OnPlayerMove;
         public Action<InputAction.CallbackContext> OnPlayerLook;
         public Action<InputAction.CallbackContext> OnPlayerInteract;
         public Action<InputAction.CallbackContext> OnPlayerSprint;
-        public Action<InputAction.CallbackContext> OnPlayerPaused;
+
+        // UI
+        public Action<InputAction.CallbackContext> OnUIClicked;
         #endregion
 
         #region Initialize
@@ -53,8 +56,6 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
         }
 
         public void OnPause(InputAction.CallbackContext context) {
-            OnPlayerPaused?.Invoke(context);
-
             if (context.phase != InputActionPhase.Canceled) return;
 
             GameManager.Instance.Pause();
@@ -113,7 +114,7 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
         }
 
         public void OnClick(InputAction.CallbackContext context) {
-            
+            OnUIClicked?.Invoke(context);
         }
 
         public void OnRightClick(InputAction.CallbackContext context) {

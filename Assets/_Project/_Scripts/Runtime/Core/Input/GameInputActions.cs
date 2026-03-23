@@ -338,6 +338,17 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fbbf8656-77ec-4365-8122-3a5ad3b889de"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -802,7 +813,7 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input
                     ""name"": """",
                     ""id"": ""d6ada1b8-9567-4b1e-9a04-e91666ee4cdc"",
                     ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Click"",

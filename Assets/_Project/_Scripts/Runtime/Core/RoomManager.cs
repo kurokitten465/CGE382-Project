@@ -7,7 +7,7 @@ using PingPingProduction.ProjectAnomaly.Interaction;
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class RoomManager : MonoBehaviour {
         [Header("Settings")]
-        [SerializeField, Range(0f, 1f)] float _anomalyChance = 0.4f;
+        [SerializeField, Range(0f, 1f)] float _anomalyChance = 0.6f;
         [SerializeField] Transform _hallwayTopPoint;
         [SerializeField] Transform _hallwayBelowpoint;
 
@@ -21,6 +21,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         const byte MAX_ANOMALY_ATTEMPTS = 4;
         byte _minAnomalyAttempts = 0;
         byte _curremtAnomalyAttempts = 0;
+        byte _currentProgress = 0;
 
         readonly HashSet<byte> _lastAnomalyIndex = new();
         GameObject _currentHallwayGO;
@@ -116,10 +117,23 @@ namespace PingPingProduction.ProjectAnomaly.Core {
                     .DOMoveY(0f, _elevatorSequencer.ElevatorMoveDuration)
                     .AsyncWaitForCompletion()
                     .AsUniTask();
+            
+            var progressMovers = new UniTask[2]; 
+
+            if (ProgressManager.AnomalyFounded != _currentProgress) {
+                if (ProgressManager.AnomalyFounded < _currentProgress) {
+                    progressMovers = _elevatorSequencer.ProgressMover(false);
+                }
+                else if (ProgressManager.AnomalyFounded > _currentProgress) {
+                    progressMovers = _elevatorSequencer.ProgressMover(true);
+                }
+
+                _currentProgress = ProgressManager.AnomalyFounded;
+            }
 
             _elevatorSequencer.PlayLoopAudio(elevatorType, ElevatorSequencer.ElevatorAudioClipType.Loop);
 
-            await UniTask.WhenAll(previousHallwayTask, currentHallwayTask);
+            await UniTask.WhenAll(previousHallwayTask, currentHallwayTask, progressMovers[0], progressMovers[1]);
 
             Destroy(_previousHallwayGO);
 

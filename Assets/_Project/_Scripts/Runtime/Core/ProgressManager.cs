@@ -3,6 +3,9 @@ using UnityEngine;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using PingPingProduction.ProjectAnomaly.Interaction;
+using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class ProgressManager : MonoBehaviour {
@@ -15,7 +18,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         public static Action<ElevatorButtonTrigger> OnElevatorButtonTriggered;
         public static bool IsResolving = false;
 
-        byte _anomalyFounded = 0;
+        public static byte AnomalyFounded {get; private set; } = 0;
 
         void Start() {
             IsResolving = true;
@@ -42,7 +45,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
         async UniTask OnGameStarted() {
             _roomManager.Generate(0);
-            _anomalyFounded = 0;
+            AnomalyFounded = 0;
             await GameManager.Instance.FadingCanvas.DOFade(0f, 3f).From(1f, true).AsyncWaitForCompletion().AsUniTask();
             GameManager.Instance.Pause();
             IsResolving = false;
@@ -50,27 +53,66 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
         async UniTaskVoid OnHallwaySequence(bool isWin, ElevatorButtonTrigger buttonTrigger) {
             if (!isWin) {
+                AnomalyFounded = 0;
                 await _roomManager.GenerateAsync(buttonTrigger, true);
                 IsResolving = false;
-                _anomalyFounded = 0;
-                Debug.Log($"Lost! Progrees: {_anomalyFounded}/{_maxAnomalyFounded}");
+                Debug.Log($"Lost! Progrees: {AnomalyFounded}/{_maxAnomalyFounded}");
             }
             else {
-                await _roomManager.GenerateAsync(buttonTrigger);
-                IsResolving = false;
-                if (!_roomManager.PreviousHallway.IsAnomaly) return;
+                if (_roomManager.CurrentHallway.IsAnomaly) {
+                    AnomalyFounded++;
+                    GameManager.Instance.UpdateAnomalyFlag(_roomManager.CurrentHallway);
+                    Debug.Log($"Win! Progrees: {AnomalyFounded}/{_maxAnomalyFounded}");
+                }
 
-                _anomalyFounded++;
-                Debug.Log($"Win! Progrees: {_anomalyFounded}/{_maxAnomalyFounded}");
+                if (AnomalyFounded != _maxAnomalyFounded) {
+                    await _roomManager.GenerateAsync(buttonTrigger);
 
-                if (_anomalyFounded != _maxAnomalyFounded) return;
+                    IsResolving = false;
+                }
+                else {
+                    _roomManager.GenerateAsync(buttonTrigger, true).Forget();
+                    await GameManager.Instance.FadingCanvas.DOFade(1f, 2f).From(0f, true).AsyncWaitForCompletion().AsUniTask();
+                    await GameManager.Instance.WinText.DOFade(1f, 1f).From(0f, true).AsyncWaitForCompletion().AsUniTask();
+
+                    await Task.Delay(8000);
+
+                    await GameManager.Instance.WinText.DOFade(0f, 1f).From(1f, true).AsyncWaitForCompletion().AsUniTask();
+
+                    GameManager.Instance.UpdateAnomalyFlag(GameManager.Instance.CardCollectionKeys.Last().Key);
+
+                    IsResolving = false;
+
+                    OnLoading().Forget();
+                }
+            }
+        }
+
+        public async UniTaskVoid OnLoading() {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("scene_main_menu");
+
+            // Stop the scene from activating immediately
+            asyncLoad.allowSceneActivation = false;
+
+            // Wait until the load is 90% complete (Unity's internal loading stops at 0.9)
+            while (asyncLoad.progress < 0.9f) {
+                // Update UI, etc.
+                await UniTask.Yield();
+            }
+
+            // Now, allow the scene to activate (Awake/Start methods will run now, which can still cause a small hitch)
+            asyncLoad.allowSceneActivation = true;
+
+            // The rest of the while loop handles the final activation
+            while (!asyncLoad.isDone) {
+                await UniTask.Yield();
             }
         }
 
         void OnGUI() {
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
-            GUI.Label(new Rect(10, 10, 300, 20), $"Current Hallway: {_roomManager.CurrentHallway.HallwayPrefab.name}");
-            GUI.Label(new Rect(10, 30, 300, 20), $"Progress: {_anomalyFounded}/{_maxAnomalyFounded}");
+            GUI.Label(new Rect(10, 10, 400, 20), $"Current Hallway: {_roomManager.CurrentHallway.HallwayPrefab.name}");
+            GUI.Label(new Rect(10, 30, 400, 20), $"Progress: {AnomalyFounded}/{_maxAnomalyFounded}");
 #endif
         }
     }

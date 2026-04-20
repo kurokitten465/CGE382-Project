@@ -1,3 +1,4 @@
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PingPingProduction.ProjectAnomaly.Core;
@@ -9,13 +10,32 @@ namespace PingPingProduction.ProjectAnomaly.UI {
         [SerializeField] string _gameScene;
         [SerializeField] AudioSource _audio;
 
+        [Header("Codex")]
+        [SerializeField] Canvas _codexCanvas;
+        [SerializeField] GameObject _codexBTN;
+        [SerializeField] Canvas _mainMenuCanvas;
+        [SerializeField] CodexController _codexController;
+
         bool _isClicked = false;
+        public bool IsEnterCodex;
 
         void Start() {
             GameManager.Instance.FadingCanvas.DOFade(0f, 2f);
+
+            if (GameManager.Instance.AnomalyFlags.Count <= 0) {
+                _codexBTN.SetActive(false);
+            }
+            else {
+                _codexBTN.SetActive(true);
+            }
+
+            if (!GameManager.Instance.IsPause)
+                GameManager.Instance.Pause();
         }
 
         public void OnStartButtonClicked() {
+            if (IsEnterCodex) return;
+
             if (!_isClicked)
                 OnLoading().Forget();
         }
@@ -29,6 +49,8 @@ namespace PingPingProduction.ProjectAnomaly.UI {
                     .From(0f, true)
                     .AsyncWaitForCompletion()
                     .AsUniTask();
+
+            GameManager.Instance.UpdateAnomalyFlag(GameManager.Instance.CardCollectionKeys[0].Key);
 
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(_gameScene);
 
@@ -50,7 +72,17 @@ namespace PingPingProduction.ProjectAnomaly.UI {
             }
         }
 
+        public void OnCodexButtonClicked() {
+            if (IsEnterCodex) return;
+
+            IsEnterCodex = true;
+            _mainMenuCanvas.gameObject.SetActive(false);
+            _codexController.StartUp();
+        }
+
         public void OnExitButtonClicked() {
+            if (IsEnterCodex) return;
+
             GameManager.Instance.End();
 
 #if UNITY_EDITOR

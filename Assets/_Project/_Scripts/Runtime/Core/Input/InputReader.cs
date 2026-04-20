@@ -20,6 +20,7 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
 
         // UI
         public Action<InputAction.CallbackContext> OnUIClicked;
+        public Action<InputAction.CallbackContext> OnUIRightClicked;
         #endregion
 
         #region Initialize
@@ -118,7 +119,7 @@ namespace PingPingProduction.ProjectAnomaly.Core.Input {
         }
 
         public void OnRightClick(InputAction.CallbackContext context) {
-            
+            OnUIRightClicked?.Invoke(context);
         }
 
         public void OnMiddleClick(InputAction.CallbackContext context) {

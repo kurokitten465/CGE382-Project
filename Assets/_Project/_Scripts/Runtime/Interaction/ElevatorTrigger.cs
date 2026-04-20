@@ -1,6 +1,7 @@
 using UnityEngine;
 using PingPingProduction.ProjectAnomaly.Player;
 using System;
+using PingPingProduction.ProjectAnomaly.Core;
 
 namespace PingPingProduction.ProjectAnomaly.Interaction {
     public class ElevatorTrigger : MonoBehaviour {

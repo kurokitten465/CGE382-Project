@@ -1,13 +1,15 @@
 using UnityEngine;
 using PingPingProduction.ProjectAnomaly.Interaction;
+using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 
-namespace PingPingProduction.ProjectAnomaly.Core
-{
-    public class ElevatorSequencer : MonoBehaviour
-    {
+namespace PingPingProduction.ProjectAnomaly.Core {
+    public class ElevatorSequencer : MonoBehaviour {
         [Header("Animations")]
         [SerializeField] Animator _yuukiElevatorAnimator;
         [SerializeField] Animator _hinaElevatorAnimator;
+        [SerializeField] SequenceMover _yuukiMover;
+        [SerializeField] SequenceMover _hinaMover;
         [SerializeField, Range(1f, 10f)] float _elevatorMoveDuration = 1f;
         public float ElevatorMoveDuration => _elevatorMoveDuration;
         [SerializeField, Range(1f, 10f)] int _elevatorOpenCloseDuration = 1;
@@ -73,6 +75,13 @@ namespace PingPingProduction.ProjectAnomaly.Core
                 ElevatorAudioClipType.Loop => _elevatorLoopClip,
                 _ => null,
             };
+        }
+
+        public UniTask[] ProgressMover(bool isMoveForward) {
+            var hinaMover = isMoveForward ? _hinaMover.MoveForward() : _hinaMover.MoveToStart();
+            var yuukiMover = isMoveForward ? _yuukiMover.MoveForward() : _yuukiMover.MoveToStart();
+
+            return new UniTask[] { hinaMover, yuukiMover }; 
         }
 
         public enum ElevatorAudioClipType {

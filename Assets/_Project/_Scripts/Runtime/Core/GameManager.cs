@@ -5,11 +5,15 @@ using PingPingProduction.ProjectAnomaly.Utilities;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class GameManager : MonoSingleton<GameManager> {
         [Header("Fading")]
         [field: SerializeField] public CanvasGroup FadingCanvas { get; private set; }
+        [field: SerializeField] public TMP_Text WinText { get; private set; }
 
         [Header("Dependencies")]
         [SerializeField] InputReader _inputReader;
@@ -18,8 +22,11 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         [SerializeField] bool _useStartup;
         [SerializeField] string _startupScene;
 
+        [field: SerializeField] public CardCollectionKey[] CardCollectionKeys { get; private set; }
+
         // Exposing Member
         public bool IsPause { get; private set; } = false;
+        public readonly HashSet<string> AnomalyFlags = new();
 
         // Init
         protected override void Awake() {
@@ -50,10 +57,36 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             return IsPause;
         }
 
+        public bool Pause(bool set) {
+            IsPause = set;
+
+            if (IsPause) {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                _inputReader.SwitchMapTo(InputReader.ActionMap.UI);
+            }
+            else {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                _inputReader.SwitchMapTo(InputReader.ActionMap.Player);
+            }
+
+            OnGamePaused?.Invoke(IsPause);
+
+            return IsPause;
+        }
+
         // GameEnded
         public static Action OnGameEnded;
         public void End() {
             OnGameEnded?.Invoke();
+        }
+
+        // GameWin
+        public static Action OnGameWin;
+        public void Win() {
+            OnGameWin?.Invoke();
+            UpdateAnomalyFlag(CardCollectionKeys.Last().Key);
         }
 
         public async UniTaskVoid OnLoading() {
@@ -82,5 +115,33 @@ namespace PingPingProduction.ProjectAnomaly.Core {
                     .AsyncWaitForCompletion()
                     .AsUniTask();
         }
+
+        // Save Progress
+        public void UpdateAnomalyFlag(string key) {
+            foreach (var e in CardCollectionKeys) {
+                if (key == e.Key) {
+                    AnomalyFlags.Add(e.Key);
+                }
+            }
+        }
+
+        public void UpdateAnomalyFlag(HallwayConfig config) {
+            foreach (var e in CardCollectionKeys) {
+                if (config.HallwayPrefab.name == e.Key) {
+                    AnomalyFlags.Add(e.Key);
+                }
+            }
+        }
+
+        void OnGUI() {
+            
+        }
+    }
+
+    [Serializable]
+    public class CardCollectionKey
+    {
+        public string Key;
+        public HallwayConfig Config;
     }
 }

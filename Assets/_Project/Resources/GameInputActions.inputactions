@@ -179,7 +179,7 @@
                     "id": "b0b5c393-ae7e-46a0-a68e-e6b8c94d8f2c",
                     "path": "<Pointer>/delta",
                     "interactions": "",
-                    "processors": "DeltaTimeScale,ScaleVector2(x=0.5,y=0.5)",
+                    "processors": "DeltaTimeScale",
                     "groups": ";Keyboard&Mouse;Touch;PC_Controoller",
                     "action": "Look",
                     "isComposite": false,

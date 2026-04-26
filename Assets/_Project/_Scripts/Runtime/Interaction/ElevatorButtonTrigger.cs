@@ -13,10 +13,12 @@ namespace PingPingProduction.ProjectAnomaly.Interaction {
         [SerializeField] Animator _elevatorBtnAnimator;
         [SerializeField] GameObject _WTMP;
         [SerializeField] Vector3 _offsets;
+        [SerializeField] AudioSource _audioSource;
 
         GameObject _currentWTMP;
 
         public ElevatorTrigger ElevatorTrigger => _elevatorTrigger;
+        public bool Enable = true;
 
         bool _isPlayerInside = false;
 
@@ -31,7 +33,10 @@ namespace PingPingProduction.ProjectAnomaly.Interaction {
         public void OnPlayerFullyInside(bool isInside) => _isPlayerInside = isInside;
 
         public void Interact() {
+            _audioSource.Play();
             if (!_isPlayerInside || ProgressManager.IsResolving) return;
+            if (!Enable) return;
+
             ProgressManager.OnElevatorButtonTriggered?.Invoke(this);
         }
 

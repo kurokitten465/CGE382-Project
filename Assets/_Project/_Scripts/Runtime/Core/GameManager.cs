@@ -8,12 +8,14 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using PingPingProduction.ProjectAnomaly.Interaction;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class GameManager : MonoSingleton<GameManager> {
         [Header("Fading")]
         [field: SerializeField] public CanvasGroup FadingCanvas { get; private set; }
         [field: SerializeField] public TMP_Text WinText { get; private set; }
+        [field: SerializeField] public TMP_Text LostText { get; private set; }
 
         [Header("Dependencies")]
         [SerializeField] InputReader _inputReader;
@@ -27,6 +29,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         // Exposing Member
         public bool IsPause { get; private set; } = false;
         public readonly HashSet<string> AnomalyFlags = new();
+        public bool IsBossRoom = false;
+        public ElevatorType PlayerLastElevator;
 
         // Init
         protected override void Awake() {
@@ -34,6 +38,9 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             Pause();
             if (_useStartup)
                 OnLoading().Forget();
+
+            LostText.alpha = 0f;
+            WinText.alpha = 0f;
         }
 
         // GamePaused
@@ -72,6 +79,23 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             }
 
             OnGamePaused?.Invoke(IsPause);
+
+            return IsPause;
+        }
+
+        public bool PauseWithOutNotify(bool set) {
+            IsPause = set;
+
+            if (IsPause) {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                _inputReader.SwitchMapTo(InputReader.ActionMap.UI);
+            }
+            else {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                _inputReader.SwitchMapTo(InputReader.ActionMap.Player);
+            }
 
             return IsPause;
         }

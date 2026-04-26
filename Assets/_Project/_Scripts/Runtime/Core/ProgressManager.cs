@@ -14,11 +14,13 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
         [Header("Depemdencies")]
         [SerializeField] RoomManager _roomManager;
+        [SerializeField] HallwayConfig _bossHallway;
+        [SerializeField] HallwayConfig _defaultHallway;
 
         public static Action<ElevatorButtonTrigger> OnElevatorButtonTriggered;
         public static bool IsResolving = false;
 
-        public static byte AnomalyFounded {get; private set; } = 0;
+        public static byte AnomalyFounded { get; private set; } = 0;
 
         void Start() {
             IsResolving = true;
@@ -54,6 +56,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         async UniTaskVoid OnHallwaySequence(bool isWin, ElevatorButtonTrigger buttonTrigger) {
             if (!isWin) {
                 AnomalyFounded = 0;
+                GameManager.Instance.IsBossRoom = false;
                 await _roomManager.GenerateAsync(buttonTrigger, true);
                 IsResolving = false;
                 Debug.Log($"Lost! Progrees: {AnomalyFounded}/{_maxAnomalyFounded}");
@@ -65,25 +68,36 @@ namespace PingPingProduction.ProjectAnomaly.Core {
                     Debug.Log($"Win! Progrees: {AnomalyFounded}/{_maxAnomalyFounded}");
                 }
 
-                if (AnomalyFounded != _maxAnomalyFounded) {
+                if (AnomalyFounded < _maxAnomalyFounded) {
                     await _roomManager.GenerateAsync(buttonTrigger);
 
                     IsResolving = false;
                 }
                 else {
-                    _roomManager.GenerateAsync(buttonTrigger, true).Forget();
-                    await GameManager.Instance.FadingCanvas.DOFade(1f, 2f).From(0f, true).AsyncWaitForCompletion().AsUniTask();
-                    await GameManager.Instance.WinText.DOFade(1f, 1f).From(0f, true).AsyncWaitForCompletion().AsUniTask();
+                    if (!GameManager.Instance.IsBossRoom) {
+                        await _roomManager.GenerateAsync(buttonTrigger, _bossHallway);
+                        IsResolving = false;
+                        GameManager.Instance.IsBossRoom = true;
+                    }
+                    else {
+                        GameManager.Instance.IsBossRoom = false;
+                        _roomManager.GenerateAsync(buttonTrigger, _defaultHallway).Forget();
 
-                    await Task.Delay(8000);
+                        await Task.Delay(2000);
 
-                    await GameManager.Instance.WinText.DOFade(0f, 1f).From(1f, true).AsyncWaitForCompletion().AsUniTask();
+                        await GameManager.Instance.FadingCanvas.DOFade(1f, 2f).From(0f, true).AsyncWaitForCompletion().AsUniTask();
+                        await GameManager.Instance.WinText.DOFade(1f, 1f).From(0f, true).AsyncWaitForCompletion().AsUniTask();
 
-                    GameManager.Instance.UpdateAnomalyFlag(GameManager.Instance.CardCollectionKeys.Last().Key);
+                        await Task.Delay(8000);
 
-                    IsResolving = false;
+                        await GameManager.Instance.WinText.DOFade(0f, 1f).From(1f, true).AsyncWaitForCompletion().AsUniTask();
 
-                    OnLoading().Forget();
+                        GameManager.Instance.UpdateAnomalyFlag(GameManager.Instance.CardCollectionKeys.Last().Key);
+
+                        IsResolving = false;
+
+                        OnLoading().Forget();
+                    }
                 }
             }
         }

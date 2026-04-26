@@ -70,6 +70,28 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             return go;
         }
 
+        public async UniTask<GameObject> GenerateAsync(ElevatorButtonTrigger buttonTrigger, HallwayConfig hallwayConfig) {
+            PreviousHallway = CurrentHallway;
+            CurrentHallway = hallwayConfig;
+
+            var buttonDirection = buttonTrigger.ElevatorDirection;
+
+            var spawnPoint = buttonDirection == ElevatorButtonDirection.Upward ? _hallwayTopPoint.position : _hallwayBelowpoint.position;
+
+            var go = Instantiate(CurrentHallway.HallwayPrefab, spawnPoint, Quaternion.identity);
+            _previousHallwayGO = _currentHallwayGO;
+            _currentHallwayGO = go;
+
+            if (buttonDirection == ElevatorButtonDirection.Upward) {
+                await ElevetorMoveHandler(_hallwayBelowpoint.position.y, buttonTrigger);
+            }
+            else {
+                await ElevetorMoveHandler(_hallwayTopPoint.position.y, buttonTrigger);
+            }
+
+            return go;
+        }
+
         HallwayConfig RandomHallway() {
             float roll = Random.value;
 

@@ -30,6 +30,7 @@ namespace PingPingProduction.ProjectAnomaly.Interaction {
         void OnTriggerExit(Collider collider) {
             _isTriggered = false;
             _isFullyInside = false;
+            GameManager.Instance.PlayerLastElevator = Elevator;
             OnLiftTriggered?.Invoke(_isFullyInside);
         }
 

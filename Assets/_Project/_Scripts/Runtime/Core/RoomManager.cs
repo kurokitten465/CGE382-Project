@@ -18,7 +18,7 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         public HallwayConfig CurrentHallway { get; private set; }
         public HallwayConfig PreviousHallway { get; private set; }
 
-        const byte MAX_ANOMALY_ATTEMPTS = 4;
+        const byte MAX_ANOMALY_ATTEMPTS = 3;
         byte _minAnomalyAttempts = 0;
         byte _curremtAnomalyAttempts = 0;
         byte _currentProgress = 0;
@@ -44,6 +44,21 @@ namespace PingPingProduction.ProjectAnomaly.Core {
 
             return obj;
         }
+
+        #if DEVELOPMENT_BUILD || UNITY_EDITOR
+        public void SetAnomalyChance(float val) => _anomalyChance = val;
+
+        public void DebugGenerate(HallwayConfig config) {
+            PreviousHallway = CurrentHallway;
+            CurrentHallway = config;
+
+            if (_currentHallwayGO != null)
+                Destroy(_currentHallwayGO);
+
+            var obj = Instantiate(CurrentHallway.HallwayPrefab, Vector3.zero, Quaternion.identity);
+            _currentHallwayGO = obj;
+        }
+        #endif
 
         public async UniTask<GameObject> GenerateAsync(ElevatorButtonTrigger buttonTrigger, bool genDefault = false) {
             if (genDefault)

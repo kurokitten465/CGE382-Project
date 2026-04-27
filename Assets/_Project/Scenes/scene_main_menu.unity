@@ -783,7 +783,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 123575611}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2077466395}
+        m_TargetAssemblyTypeName: PingPingProduction.ProjectAnomaly.UI.CodexController,
+          com.pingpingproduction.projectanamolies
+        m_MethodName: OnCodexClicked
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Hallway_05_Down_RoomNumberSwap_NotComplete
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &123575611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4181,7 +4194,7 @@ GameObject:
   - component: {fileID: 761369427}
   - component: {fileID: 761369428}
   m_Layer: 5
-  m_Name: Card_Button_ID_05 //
+  m_Name: Card_Button_ID_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4220,11 +4233,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180ca76d1d9bb80459c7a831795ce96d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
-  Config: {fileID: 0}
-  Card: {fileID: 0}
-  Title: 
-  Desc: 
+  ID: Hallway_05_Down_RoomNumberSwap_NotComplete
+  Config: {fileID: 11400000, guid: d16b4ae5ad445714ba831da735da0288, type: 2}
+  Card: {fileID: 2891437121504888792, guid: 5aa24a144c14cd44fbfa25456bf7b104, type: 3}
+  Title: Change Reality
+  Desc: "I know I\u2019ve walked past this room a dozen times, but the numbers...
+    they're all out of order. What\u2019s wrong with this place?"
 --- !u!1 &766177952
 GameObject:
   m_ObjectHideFlags: 0
@@ -5729,7 +5743,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1050802843}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2077466395}
+        m_TargetAssemblyTypeName: PingPingProduction.ProjectAnomaly.UI.CodexController,
+          com.pingpingproduction.projectanamolies
+        m_MethodName: OnCodexClicked
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Hallway_06_Down_DoorBloodTexture_NotComplete
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1050802843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10368,7 +10395,7 @@ GameObject:
   - component: {fileID: 1887413961}
   - component: {fileID: 1887413962}
   m_Layer: 5
-  m_Name: Card_Button_ID_06 //
+  m_Name: Card_Button_ID_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10407,11 +10434,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180ca76d1d9bb80459c7a831795ce96d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 
-  Config: {fileID: 0}
-  Card: {fileID: 0}
-  Title: 
-  Desc: 
+  ID: Hallway_06_Down_DoorBloodTexture_NotComplete
+  Config: {fileID: 11400000, guid: c4351fc6edb715e41811f55b185d7815, type: 2}
+  Card: {fileID: 8294203708173053063, guid: 2f53324cf72ac884692c9e7570fb78c1, type: 3}
+  Title: Bloody Door
+  Desc: "God, what is happening here? These twisted pictures, the axe marks on the
+    doors, the bloody doorknobs... I can\u2019t take it anymore. I have to leave
+    before I go completely insane."
 --- !u!1 &1895793109
 GameObject:
   m_ObjectHideFlags: 0
@@ -11177,6 +11206,8 @@ MonoBehaviour:
   - {fileID: 1341628559}
   - {fileID: 1197063446}
   - {fileID: 1824875207}
+  - {fileID: 761369428}
+  - {fileID: 1887413962}
   - {fileID: 378853733}
   - {fileID: 1619184741}
   - {fileID: 1143186305}

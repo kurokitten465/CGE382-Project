@@ -179,6 +179,10 @@ MonoBehaviour:
     Config: {fileID: 11400000, guid: 991cb119ff3e814498e1fdcef73bc75c, type: 2}
   - Key: Hallway_04_Up_ScpDoor
     Config: {fileID: 11400000, guid: df53a79b433099b44b0e7ff052e1df23, type: 2}
+  - Key: Hallway_05_Down_RoomNumberSwap_NotComplete
+    Config: {fileID: 11400000, guid: d16b4ae5ad445714ba831da735da0288, type: 2}
+  - Key: ParallaxCard_17 Variant
+    Config: {fileID: 11400000, guid: b594f2198c99cc34d984ff8dbd761d62, type: 2}
   - Key: Hallway_07_Up_LightClick
     Config: {fileID: 11400000, guid: 438e564925a7af740874b96da8163231, type: 2}
   - Key: Hallway_08_Up_DoorCrackCrack

@@ -6,6 +6,7 @@ using PingPingProduction.ProjectAnomaly.Interaction;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using TMPro;
 
 namespace PingPingProduction.ProjectAnomaly.Core {
     public class ProgressManager : MonoBehaviour {
@@ -16,6 +17,19 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         [SerializeField] RoomManager _roomManager;
         [SerializeField] HallwayConfig _bossHallway;
         [SerializeField] HallwayConfig _defaultHallway;
+        [SerializeField] TMP_Text _progressText;
+        byte _currentProgress = 0;
+
+        /*         [Header("Debugger")]
+                [SerializeField] HallwayConfig _hallway_0;
+                [SerializeField] HallwayConfig _hallway_1;
+                [SerializeField] HallwayConfig _hallway_2;
+                [SerializeField] HallwayConfig _hallway_3;
+                [SerializeField] HallwayConfig _hallway_4;
+                [SerializeField] HallwayConfig _hallway_5;
+                [SerializeField] HallwayConfig _hallway_6;
+                [SerializeField] HallwayConfig _hallway_7;
+                [SerializeField] HallwayConfig _hallway_8; */
 
         public static Action<ElevatorButtonTrigger> OnElevatorButtonTriggered;
         public static bool IsResolving = false;
@@ -48,6 +62,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         async UniTask OnGameStarted() {
             _roomManager.Generate(0);
             AnomalyFounded = 0;
+            _currentProgress = 0;
+            _progressText.text = _currentProgress.ToString();
             await GameManager.Instance.FadingCanvas.DOFade(0f, 3f).From(1f, true).AsyncWaitForCompletion().AsUniTask();
             GameManager.Instance.Pause();
             IsResolving = false;
@@ -56,6 +72,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
         async UniTaskVoid OnHallwaySequence(bool isWin, ElevatorButtonTrigger buttonTrigger) {
             if (!isWin) {
                 AnomalyFounded = 0;
+                _currentProgress = 0;
+                _progressText.text = _currentProgress.ToString();
                 GameManager.Instance.IsBossRoom = false;
                 await _roomManager.GenerateAsync(buttonTrigger, true);
                 IsResolving = false;
@@ -64,6 +82,8 @@ namespace PingPingProduction.ProjectAnomaly.Core {
             else {
                 if (_roomManager.CurrentHallway.IsAnomaly) {
                     AnomalyFounded++;
+                    _currentProgress++;
+                    _progressText.text = _currentProgress.ToString();
                     GameManager.Instance.UpdateAnomalyFlag(_roomManager.CurrentHallway);
                     Debug.Log($"Win! Progrees: {AnomalyFounded}/{_maxAnomalyFounded}");
                 }
@@ -122,12 +142,46 @@ namespace PingPingProduction.ProjectAnomaly.Core {
                 await UniTask.Yield();
             }
         }
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        float sliderValue = 0.6f;
 
         void OnGUI() {
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-            GUI.Label(new Rect(10, 10, 400, 20), $"Current Hallway: {_roomManager.CurrentHallway.HallwayPrefab.name}");
-            GUI.Label(new Rect(10, 30, 400, 20), $"Progress: {AnomalyFounded}/{_maxAnomalyFounded}");
-#endif
+            GUI.Label(new Rect(10, 10, 600, 30), $"Current Hallway: {_roomManager.CurrentHallway.HallwayPrefab.name}");
+            GUI.Label(new Rect(10, 40, 600, 30), $"Current Anomaly Chance: {sliderValue}");
+            sliderValue = GUI.HorizontalSlider(new Rect(10, 80, 300, 50), sliderValue, 0.1f, 1f);
+
+            _roomManager.SetAnomalyChance(sliderValue);
+
+            /*             if (GUI.Button(new Rect(10, 70, 200, 40), "Default Room"))
+                            _roomManager.DebugGenerate(_defaultHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Boss Room"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Anomaly Room 1"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Anomaly Room 2"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Anomaly Room 3"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Room 4"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Room 4"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Room 4"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Room 4"))
+                            _roomManager.DebugGenerate(_bossHallway);
+
+                        if (GUI.Button(new Rect(10, 110, 200, 40), "Room 4"))
+                            _roomManager.DebugGenerate(_bossHallway); */
         }
+#endif
     }
 }
